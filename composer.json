@@ -1,8 +1,9 @@
 {
     "name": "archon810/WP-Appbox",
+    "type": "wordpress-plugin",
     "autoload": {
         "psr-4" : {
-            "archon810\\WP-Appbox" : "src"
+            "archon810\\WP-Appbox\" : "src"
         }
     }
 }
