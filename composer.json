@@ -1,0 +1,8 @@
+{
+    "name": "archon810/WP-Appbox",
+    "autoload": {
+        "psr-4" : {
+            "archon810\\WP-Appbox" : "src"
+        }
+    }
+}
