@@ -1,12 +1,12 @@
 <?php
 
-	
+
 /**
 * wpAppbox_CreateOutput
 */
 class wpAppbox_CreateOutput {
-	
-		
+
+
 	/**
 	* Ersetzt HTTP und HTTPS durch // und wandelt Links für Apple und Amazon um
 	*
@@ -17,7 +17,7 @@ class wpAppbox_CreateOutput {
 	* @param   string  $storeID  ID des Stores (z.B. "googleplay")
 	* @return  string  $theURL   Umgewandelter App-Link
 	*/
-	
+
 	function cleanURL( $theURL, $storeID ) {
 		if ( is_ssl() ) {
 			$theURL = str_replace( 'http://', '//', $theURL );
@@ -36,7 +36,7 @@ class wpAppbox_CreateOutput {
 				} else {
 					$theURL = 'http:' . $theURL;
 				}
-			} 
+			}
 			if ( strpos( $theURL, 'amazon.' ) ) {
 				$theURL = str_replace( 'ecx.images-amazon.com', 'images-na.ssl-images-amazon.com', $theURL );
 				$theURL = 'https:' . $theURL;
@@ -44,8 +44,8 @@ class wpAppbox_CreateOutput {
 		}
 		return( $theURL );
 	}
-	
-	
+
+
 	/**
 	* Prüft ob eine gültige Store-ID und App-ID angebeben wurden
 	*
@@ -55,7 +55,7 @@ class wpAppbox_CreateOutput {
 	* @param   array    $attr       Attribute [WordPress]
 	* @return  boolean  true/false  TRUE when both
 	*/
-	
+
 	function checkAttributs( $attr ) {
 		if ( '' == $attr['store'] ) {
 			return( 'nostore');
@@ -65,8 +65,8 @@ class wpAppbox_CreateOutput {
 			return( true );
 		}
 	}
-	
-	
+
+
 	/**
 	* Baut den Funktionsnamen zusammen und ruft die Funktion auf
 	*
@@ -77,7 +77,7 @@ class wpAppbox_CreateOutput {
 	* @param   string  $appID    ID der App
 	* @return  array   $appData  Array der App-Daten
 	*/
-	
+
 	function getTheAppData( $storeID, $appID ) {
 		$appData = new wpAppbox_GetAppInfoAPI;
 		switch ( $storeID ) {
@@ -91,8 +91,8 @@ class wpAppbox_CreateOutput {
 		$thegetfunction = "get$storeID";
 		return( $appData->$thegetfunction( $appID ) );
 	}
-	
-	
+
+
 	/**
 	* Erzeugt die Ausgabe für den Feed
 	*
@@ -101,13 +101,13 @@ class wpAppbox_CreateOutput {
 	*
 	* @return  string  output  Feedausgabe
 	*/
-	
+
 	function getTheFeedOutput() {
 		$feedOutput = "<p><strong>WP-Appbox:</strong> <a href=\"{APPLINK}\" title=\"{TITLE}\">{TITLE} ({PRICE}, {STORE}) →</a></p>";
 		return( $feedOutput );
 	}
-	
-	
+
+
 	/**
 	* Gibt den QR-Code zurück
 	*
@@ -123,7 +123,7 @@ class wpAppbox_CreateOutput {
 	*
 	* @infos   https://developers.google.com/chart/infographics/docs/qr_codes
 	*/
-	
+
 	function returnQRCode( $appLink, $appID, $appTitle, $size = '200', $EC_level = 'L', $margin = '0' ) {
 		global $ItemInfo;
 		$appLink = $this->returnAppLink( $appLink, $appID );
@@ -131,8 +131,8 @@ class wpAppbox_CreateOutput {
 		$qrCode = "https://chart.googleapis.com/chart?cht=qr&chl=$qrCode&chs=$size"."x"."$size&chld=$EC_level|$margin";
 		return( "<div class=\"qrcode\"><img src=\"$qrCode\" alt=\"$appTitle\" /></div>" );
 	}
-	
-	
+
+
 	/**
 	* Gibt den Entwickler mitsamt Link zurück
 	*
@@ -144,7 +144,7 @@ class wpAppbox_CreateOutput {
 	* @param   string  $appLink       Manche Stores haben keine Entwicklerseite... [optional]
 	* @return  string                 HTML-Ausgabe (<a></a>) des Entwicklers
 	*/
-	
+
 	function returnDeveloper( $appAuthor, $appAuthorURL, $appID, $appLink = true ) {
 		if ( $appAuthorURL === NULL ||$appAuthorURL == '' || !$appLink ) {
 			return( $appAuthor );
@@ -153,8 +153,8 @@ class wpAppbox_CreateOutput {
 			return( '<a href="'.$appAuthorURL.'">'.$appAuthor.'</a>' );
 		}
 	}
-	
-	
+
+
 	/**
 	* Gibt das App-Icon zurück
 	*
@@ -166,7 +166,7 @@ class wpAppbox_CreateOutput {
 	* @param   string  $appBackground  Windows Store hat teilweise Hintergrundfarben [optional]
 	* @return  string                  Rückgabe der Icon-URL (Windows Store mit Hintergrund)
 	*/
-	
+
 	function returnAppIcon( $appIcon, $appStore, $appBackground = '' ) {
 		if ( $appStore == 'windowsstore' && $appBackground != '' ) {
 			return( $this->cleanURL( $appIcon, $appStore ).'" style="' . $appBackground . ';');
@@ -174,8 +174,8 @@ class wpAppbox_CreateOutput {
 			return( $this->cleanURL( $appIcon, $appStore ) );
 		}
 	}
-	
-	
+
+
 	/**
 	* Gibt den Link zum Store zurück (mit Affiliate)
 	*
@@ -186,7 +186,7 @@ class wpAppbox_CreateOutput {
 	* @param   string  $appID    ID der App
 	* @return  string  $appLink  Rückgabe der URL mit Affiliate-ID
 	*/
-	
+
 	function returnAppLink( $appLink, $appID ) {
 		/**
 		* Link-Umwandlung für iTunes-Affiliate
@@ -264,8 +264,8 @@ class wpAppbox_CreateOutput {
 		*/
 		return( $appLink );
 	}
-	
-	
+
+
 	/**
 	* Gibt die Bewertung zurück
 	*
@@ -275,7 +275,7 @@ class wpAppbox_CreateOutput {
 	* @param   string  $appRating  Bewertung der App
 	* @return  string              HTML-Ausgabe der Bewertungssterne
 	*/
-	
+
 	function returnRating( $appRating ) {
 		if ( ( '1' == get_option('wpAppbox_showRating') ) || ( '2' == get_option('wpAppbox_showRating') ) ) {
 			if ( $appRating == '-1' ) return('');
@@ -315,8 +315,8 @@ class wpAppbox_CreateOutput {
 			return( '<div title="' . $appRating . ' ' . __('of 5 stars', 'wp-appbox') . '" class="rating-stars ' . $starsColor . ' stars' . $appRatingStars . '"></div>' );
 		}
 	}
-	
-	
+
+
 	/**
 	* Gibt die Screenshots zurück
 	*
@@ -325,10 +325,10 @@ class wpAppbox_CreateOutput {
 	*
 	* @param   array   $appScreenshots     Array der Screenshots
 	* @param   string  $storeID            ID des Stores (z.B. "appstore")
-	* @param   string  $appType            Typ der Screenshotausgabe (z.B "iphone") [optional]  
+	* @param   string  $appType            Typ der Screenshotausgabe (z.B "iphone") [optional]
 	* @return  string  $outputScreenshots  HTML-Ausgabe der Screenshots (Liste)
 	*/
-	
+
 	function returnScreenshots( $appScreenshots, $storeID, $appType = '' ) {
 		switch ( $storeID ) {
 		case 'appstore':
@@ -380,8 +380,8 @@ class wpAppbox_CreateOutput {
 		}
 		return( $outputScreenshots );
 	}
-	
-	
+
+
 	/**
 	* Gibt den Preis zurück
 	*
@@ -393,7 +393,7 @@ class wpAppbox_CreateOutput {
 	* @param   string   $oldPrice   Alter Preis der App (Shortcode "oldprice=x")
 	* @return  string               (HTML-)Ausgabe des Preises
 	*/
-	
+
 	function returnPrice( $appPrice, $appHasIAP, $oldPrice ) {
 		if ( $appHasIAP) {
 			$appIAP = "<sup>+</sup>";
@@ -409,8 +409,8 @@ class wpAppbox_CreateOutput {
 			return( "<span class=\"oldprice\">$oldPrice</span> " . $appPrice . $appIAP );
 		}
 	}
-	
-	
+
+
 	/**
 	* Gibt den Reload-Link zurück
 	*
@@ -420,14 +420,14 @@ class wpAppbox_CreateOutput {
 	* @param   string  $cacheID  Cache-ID der App
 	* @return  string            HTML-Ausgabe des Reload-Links (<a></a>)
 	*/
-	
+
 	function returnReloadLink( $cacheID ) {
 		if ( !WPAPPBOX_DISABLE_CACHE && wpAppbox_isUserAuthor() ) {
 			return('<a href="'.get_permalink().(is_preview() ? '?preview=true&amp;' : '?').'wpappbox_reload_cache&amp;wpappbox_cacheid='.$cacheID.'" title="'.__('Renew cached data of this app', 'wp-appbox').'" class="reload-link">&#8635;</a> ');
 		}
 	}
-	
-	
+
+
 	/**
 	* Ausgabe diverser Fehler (wird überarbeitet)
 	*
@@ -440,7 +440,7 @@ class wpAppbox_CreateOutput {
 	* @param   string  $style       Name des Banner-Styles [optional, Standard = simple]
 	* @return  string               HTML-Ausgabe der Fehlermeldung
 	*/
-	
+
 	function errorOutput( $error_type, $storeID = '', $appID = '', $style = 'simple' ) {
 		switch ( $error_type ) {
 		case 'nostore':
@@ -491,16 +491,16 @@ class wpAppbox_CreateOutput {
 			if( strpos( $appID, "bundle" ) !== false ) {
 				$pageURL = str_replace( 'app/id', '', $pageURL );
 			}
-			$output = '<!-- WP-Appbox (Store: ' . $storeID . ' // ID: ' . $appID . ') --><div class="wpappbox error"><span>' . $output . ' :-( #wpappbox<br /><br /><strong>' . esc_html__('Links', 'wp-appbox') . ':</strong> <a ' . ( get_option('wpAppbox_targetBlank') ? 'target="_blank"' : '' ) . ' ' . ( get_option('wpAppbox_nofollow') ? 'rel="noopener nofollow"' : 'rel="noopener"' ) . ' href="' . $appURL . '">→ ' . esc_html__('Visit Store', 'wp-appbox') . '</a> <a '.(get_option('wpAppbox_targetBlank') ? 'target="_blank"' : '') . ' ' . (get_option('wpAppbox_nofollow') ? 'rel="nofollow"' : '') . ' href="http://www.google.com/search?q=' . $appID . '+' . $storeID . '">→ ' . esc_html__('Search Google', 'wp-appbox') . '</a></span></div><!-- /WP-Appbox -->';
+			$output = '<!-- WP-Appbox (Store: ' . $storeID . ' // ID: ' . $appID . ') --><div class="wpappbox error"><span>' . $output . '<br /><br /><strong>' . esc_html__('Links', 'wp-appbox') . ':</strong> <a ' . ( get_option('wpAppbox_targetBlank') ? 'target="_blank"' : '' ) . ' ' . ( get_option('wpAppbox_nofollow') ? 'rel="noopener nofollow"' : 'rel="noopener"' ) . ' href="' . $appURL . '">→ ' . esc_html__('Visit Store', 'wp-appbox') . '</a> <a '.(get_option('wpAppbox_targetBlank') ? 'target="_blank"' : '') . ' ' . (get_option('wpAppbox_nofollow') ? 'rel="nofollow"' : '') . ' href="http://www.google.com/search?q=' . $appID . '+' . $storeID . '">→ ' . esc_html__('Search Google', 'wp-appbox') . '</a></span></div><!-- /WP-Appbox -->';
 		} elseif ( 'fallback' != $error_type ) {
-			$output = "<!-- WP-Appbox (Store: $storeID // ID: $appID) --><div class=\"wpappbox error\"><span>$output :-( #wpappbox</span></div><!-- /WP-Appbox -->";
+			$output = "<!-- WP-Appbox (Store: $storeID // ID: $appID) --><div class=\"wpappbox error\"><span>$output </span></div><!-- /WP-Appbox -->";
 		}
 		if ( get_option('wpAppbox_eOnlyAuthors') == false || wpAppbox_isUserAuthor() || isset ( $_GET['wpappbox_show_errormessages'] ) ) {
 			return( $output );
 		}
 	}
-	
-	
+
+
 	/**
 	* Rückgabe der eigentlich Appbox
 	*
@@ -510,11 +510,11 @@ class wpAppbox_CreateOutput {
 	* @param   array   $attr      Attribute des Shortcodes [WordPress]
 	* @return  string  $template  Rückgabe des fertigen Templates
 	*/
-	
+
 	function theOutput( $attr ) {
 		global $wpAppbox_optionsDefault;
 		if ( $this->checkAttributs( $attr ) === true ) {
-		
+
 			switch ( $attr['store'] ) {
 				case 'appstore':
 					if ( $attr['bundle'] == true ) {
@@ -547,22 +547,22 @@ class wpAppbox_CreateOutput {
 					$attr['appid'] = str_replace( array( '-mobile', '-desktop', '-all' ), '', $attr['appid'] );
 					break;
 			}
-		
+
 			$appData = $this->getTheAppData( $attr['store'], $attr['appid'] );
-		
+
 			if ( !$appData ) {
 				return( $this->errorOutput( 'notfound', $attr['store'], $attr['appid'] ) );
 			} elseif ( '1' == $appData['fallback'] ) {
 				$template = $this->errorOutput( 'fallback', $appData['storeNameCSS'], $attr['appid'], $attr['style'] );
 				return( $template );
-				
+
 		} else {
-		
+
 			$template = wpAppbox_loadTemplate( $attr['style'] );
-			
+
 			if (  'screenshots' == $attr['style'] || 'screenshots-only' == $attr['style'] ) {
 				$appScreenshots = $this->returnScreenshots( $appData['app_screenshots'], $appData['store_name_css'], $appType );
-			
+
 				if ( ( 'screenshots' === $attr['style'] || 'screenshots-only' === $attr['style'] ) && '' == $appScreenshots ) {
 					$attr['style'] = get_option('wpAppbox_defaultStyle');
 					if ( ( 'simple' != $attr['style'] ) && ( 'compact' != $attr['style'] ) ) {
@@ -573,11 +573,11 @@ class wpAppbox_CreateOutput {
 					$template = str_replace( '{SCREENSHOTS}', $appScreenshots, $template );
 				}
 			}
-			
+
 			if ( is_feed() ) {
 				$template = $this->getTheFeedOutput();
 			}
-			
+
 			$template = str_replace( '{WPAPPBOXVERSION}', WPAPPBOX_PLUGIN_VERSION, $template );
 			$template = str_replace( '{DOWNLOADCAPTION}', ( get_option('wpAppbox_downloadCaption') != '' ? get_option('wpAppbox_downloadCaption') : $wpAppbox_optionsDefault['downloadCaption'] ), $template );
 			$template = str_replace( '{APPID}', $appData['app_id'], $template );
@@ -597,19 +597,19 @@ class wpAppbox_CreateOutput {
 				$template = str_replace( '<a ', '<a rel="nofollow" ', $template );
 			}
 			if ( get_option('wpAppbox_targetBlank') ) {
-				$template = str_replace( '<a ', '<a target="_blank" ', $template ); 
+				$template = str_replace( '<a ', '<a target="_blank" ', $template );
 			}
 			$template = str_replace( '{RELOADLINK}', $this->returnReloadLink( $appData['id'] ), $template );
 			if ( !is_feed() ) {
 				$template = '<!-- WP-Appbox (Store: ' . $appData['store_name_css'] . ' // ID: ' . $appData['app_id'] . ') -->' . $template . '<!-- /WP-Appbox -->';
 			}
-			
+
 			return( $template );
 		}
 		} else return( $this->errorOutput( $this->checkAttributs( $attr ) ) );
 	}
-	
-		
+
+
 } /* Class beenden */
 
 ?>
