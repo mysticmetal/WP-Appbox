@@ -1,9 +1,6 @@
 {
     "name": "archon810/WP-Appbox",
+    "description": "WP-Appbox",
     "type": "wordpress-plugin",
-    "autoload": {
-        "psr-4" : {
-            "archon810\\WP-Appbox\\" : "src"
-        }
-    }
+    "require": {}
 }
